@@ -31,9 +31,16 @@ function addList(e) {
     let text = itemInput.value; 
     if(condition) {
         let itemSelect = itemList.querySelector('.edit'); 
+        itemSelect.classList.remove('edit');
         removeLocal(itemSelect.textContent); 
         itemSelect.remove();
         condition = false; 
+    } else {
+        if(itemAlreadyExist(text)) {
+            alert('Item already Exist'); 
+            itemInput.value = '';
+            return;
+        }
     }
     // Add LocalStorage 
     LocalStorageData(text);
@@ -122,6 +129,11 @@ function removeItemLocal(e) {
     } else {
         setItemToEdit(e.target)
     }
+}
+
+function itemAlreadyExist(newItem) {
+    let LocalStorageArray = fromLocalStorage(); 
+    return LocalStorageArray.includes(newItem);
 }
 
 function setItemToEdit(text) {
