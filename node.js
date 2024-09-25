@@ -4,7 +4,8 @@ const itemList = document.getElementById('item-list');   // UL
 const button = document.querySelector('.btn-link');
 const buttonClear = document.querySelector('.btn-clear');
 const filter = document.getElementById('filter');
-
+const btn = document.querySelector('.btn');
+let condition = false; 
 
 
 checkUI();
@@ -28,7 +29,12 @@ function addList(e) {
         return;
     }
     let text = itemInput.value; 
-
+    if(condition) {
+        let itemSelect = itemList.querySelector('.edit'); 
+        removeLocal(itemSelect.textContent); 
+        itemSelect.remove();
+        condition = false; 
+    }
     // Add LocalStorage 
     LocalStorageData(text);
     createLiDOM(text)
@@ -88,6 +94,7 @@ function clearItems(e) {
 
 
 function checkUI() {
+    
     const lists = itemList.querySelectorAll('li'); 
     if(lists.length ===0) {
         buttonClear.style.display = "none"; 
@@ -95,6 +102,10 @@ function checkUI() {
     } else {
         buttonClear.style.display = "block"; 
         filter.style.display = "block";
+    }
+    if(!condition) {
+        btn.innerHTML = '<i class="fa-solid fa-plus"></i>  Add Item';
+        btn.style.backgroundColor = '#333';
     }
 }
 
@@ -105,14 +116,29 @@ function removeItemLocal(e) {
             e.target.parentElement.parentElement.remove('li');
 
             //remove from LocalStorage 
-            removeLocal(e);
+            removeLocal(e.target.parentElement.parentElement.textContent);
         }
         checkUI();
+    } else {
+        setItemToEdit(e.target)
     }
 }
 
+function setItemToEdit(text) {
+    condition = true; 
+
+    itemList.querySelectorAll('li').forEach(i=> i.classList.remove('edit'));
+        
+    text.classList.add('edit'); 
+    btn.innerHTML = '<i class="fa-solid fa-pen"></i>  Update item';
+    btn.style.backgroundColor = '#228B22';
+    itemInput.value = text.textContent.trim();
+}
+
+
+
 function removeLocal(e) {
-    let text = e.target.parentElement.parentElement.textContent; 
+    let text = e; 
     let LocalStorageArray = fromLocalStorage(); 
 
     LocalStorageArray = LocalStorageArray.filter((item)=> {
